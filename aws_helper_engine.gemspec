@@ -23,4 +23,9 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "rails", ">= 7.1.5.1"
+
+  spec.add_dependency "aws-sdk-s3"
+  spec.add_dependency "aws-sdk-ec2"
+  spec.add_dependency "aws-sdk-sns"
+
 end

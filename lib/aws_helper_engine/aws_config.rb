@@ -32,7 +32,7 @@ module AwsHelperEngine
       # This method can authenticate using IAM roles (example, not complete)
       def authenticate_with_iam_role
         # Here you can load credentials from environment or instance profile
-        Aws::STS::Client.new
+
       end
     end
   end

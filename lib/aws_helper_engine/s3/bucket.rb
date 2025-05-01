@@ -48,7 +48,7 @@ module AwsHelperEngine
 
       def put_object(object)
         puts "Putting object '#{object}' in the bucket."
-        @s3_resource.bucket(@bucket_name).put_object_acl(key: object.key , body: object.body  )
+        @s3_client.bucket(@bucket_name).put_object_acl(key: object.key , body: object.body  )
       rescue Aws::Errors::ServiceError => e
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false

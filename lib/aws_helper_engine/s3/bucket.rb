@@ -1,40 +1,69 @@
 # frozen_string_literal: true
+#remebere to create a gem for aws you need to create api interface in this case its s3_ressource(oop api),
+# the interface is like a bridges that translate for you your request(from code to real APIrequest)
 
 require 'aws-sdk-s3'
 module AwsHelperEngine
   module S3
     class Bucket
-      attr_reader :bucket, :options
+      attr_reader :s3_resource, :options, :region
 
-      def initialize(bucket_name)
-        super()
+      def initialize(bucket_name, region: 'us-east-1')
         @bucket_name = bucket_name
+        @s3_resource = Aws::S3::Resource.new(region: region)
       end
 
       # Create the bucket with ACL, name, and configuration
-      def self.create_bucket(acl, bucket_name, create_bucket_configuration, options)
-        unless Aws::S3::CREATE
-          create(bucket_name, create_bucket_configuration.create_bucket_configuration: { location_constraint: region }, acl)
-        end
+      def create_bucket(acl: 'private')
+        bucket = @s3_resource.create_bucket(
+          bucket: @bucket_name,
+          acl: acl,
+          create_bucket_configuration: {
+            location_constraint: @region
+          }
+        )
+        puts "Created demo bucket named #{bucket.name}."
+        bucket
       rescue Aws::Errors::ServiceError => e
-        put "#{e.message}"
+        puts "Failed to create bucket: #{e.message}"
       end
+      def self.list_buckets
+        count=0
+        @s3_resource.list_buckets.buckets.each { |i|
+          count+1
+        }
+        return count
 
-      end
-
-      # Helper method to check if bucket exists (simulated)
-      def bucket_exists?(bucket_name)
-        # For the sake of example, let's assume this checks if the bucket exists.
-        # Replace with real AWS SDK call to check the bucket's existence.
-        puts "Checking if bucket '#{bucket_name}' exists..."
+      rescue Aws::Errors::ServiceError => e
+        puts "Couldn't list buckets. Here's why: #{e.message}"
         false
       end
+      end
+    def  delete_bucket(s3_resources)
+      s3_resources.objects.batch_delete!
+      s3_resources.delete
+      # Helper method to check if bucket exists (simulated)
+      end
 
-      # Dummy method to show putting an object in the bucket
       def put_object(object)
         puts "Putting object '#{object}' in the bucket."
-        # Actual code for uploading an object to the bucket would go here.
+        @s3_resources.bucket(@bucket_name).put_object_acl(bucket: @s3_ressources.bucket,key: , acl:  )
+      rescue Aws::Errors::ServiceError => e
+        puts "Couldn't list buckets. Here's why: #{e.message}"
+        false
       end
-    end
+      end
+  def get_object(bucket, responce_target)
+    @s3_ressources.get_object(bucket: bucket,key: ,responce_target: responce_target)
+  rescue Aws::Errors::ServiceError => e
+    puts "Couldn't list buckets. Here's why: #{e.message}"
+    false
   end
+  end
+
+    def  delete_all_bucket
+      s3_resource.clear!
+    end
+
 end
+

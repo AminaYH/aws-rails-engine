@@ -11,6 +11,8 @@ module AwsHelperEngine
       def initialize(bucket_name, region: 'us-east-1')
         @bucket_name = bucket_name
         @s3_resource = Aws::S3::Resource.new(region: region)
+        @client   = Aws::S3::Client.new(region: region)
+
       end
 
       # Create the bucket with ACL, name, and configuration
@@ -38,7 +40,6 @@ module AwsHelperEngine
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false
       end
-      end
     def  delete_bucket(s3_resources)
       s3_resources.objects.batch_delete!
       s3_resources.delete
@@ -47,23 +48,27 @@ module AwsHelperEngine
 
       def put_object(object)
         puts "Putting object '#{object}' in the bucket."
-        @s3_resources.bucket(@bucket_name).put_object_acl(bucket: @s3_ressources.bucket,key: , acl:  )
+        @s3_resource.bucket(@bucket_name).put_object_acl(key: object.key , body: object.body  )
       rescue Aws::Errors::ServiceError => e
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false
       end
-      end
-  def get_object(bucket, responce_target)
-    @s3_ressources.get_object(bucket: bucket,key: ,responce_target: responce_target)
+
+  def get_object(key:, response_target:)
+    client = Aws::S3::Client.new(region: @region)
+    client.get_object(bucket: @bucket_name, key: key, response_target: response_target)
+    puts "Downloaded object '#{key}' to '#{response_target}'."
   rescue Aws::Errors::ServiceError => e
-    puts "Couldn't list buckets. Here's why: #{e.message}"
-    false
+    puts "Failed to get object: #{e.message}"
+    nil
   end
-  end
+
 
     def  delete_all_bucket
       s3_resource.clear!
     end
 
+end
+end
 end
 

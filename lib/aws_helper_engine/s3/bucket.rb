@@ -10,8 +10,10 @@ module AwsHelperEngine
 
       def initialize(bucket_name, region: 'us-east-1')
         @bucket_name = bucket_name
-        @s3_resource = Aws::S3::Resource.new(region: region)
-        @client   = Aws::S3::Client.new(region: region)
+        @region = region
+
+        @s3_resource = Aws::S3::Resource.new(region: @region)
+        @client   = Aws::S3::Client.new(region: @region)
 
       end
 
@@ -40,9 +42,10 @@ module AwsHelperEngine
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false
       end
-    def  delete_bucket(s3_resources)
-      s3_resources.objects.batch_delete!
-      s3_resources.delete
+    def  delete_bucket(bucke_name)
+      bucket=@s3_resource.bucket(bucket_name)
+      @s3_resource.objects.batch_delete!
+      @s3_resource.delete
       # Helper method to check if bucket exists (simulated)
       end
 
@@ -55,8 +58,7 @@ module AwsHelperEngine
       end
 
   def get_object(key:, response_target:)
-    client = Aws::S3::Client.new(region: @region)
-    client.get_object(bucket: @bucket_name, key: key, response_target: response_target)
+    @client.get_object(bucket: @bucket_name, key: key, response_target: response_target)
     puts "Downloaded object '#{key}' to '#{response_target}'."
   rescue Aws::Errors::ServiceError => e
     puts "Failed to get object: #{e.message}"

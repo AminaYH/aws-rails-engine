@@ -27,5 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aws-sdk-s3"
   spec.add_dependency "aws-sdk-ec2"
   spec.add_dependency "aws-sdk-sns"
+  spec.add_dependency "aws-sdk-core"
 
 end

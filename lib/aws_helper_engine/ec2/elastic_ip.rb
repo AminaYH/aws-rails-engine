@@ -31,6 +31,7 @@ rescue StandardError => e
   puts "Error associating Elastic IP address with instance: #{e.message}"
   'Error'
 end
+
 end
 
 end

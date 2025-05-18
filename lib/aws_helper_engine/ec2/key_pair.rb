@@ -11,7 +11,8 @@ class KeyPair
     @name=name
     @key_type = options[:key_type] || 'rsa'
     @key_format=options[:key_format] || 'pem'
-    @tags = options[:tags] || [] @key_format = options[:key_format] || 'pem'
+    @tags = options[:tags] || []
+     @key_format = options[:key_format] || 'pem'
     @client = Aws::EC2::Client.new(region: options[:region] || 'us-east-1')
     @dry_run=options[:dry_run] || false
   
@@ -61,7 +62,8 @@ end
     rsa_key= OpenSSL::PKey::RSA.new  File.read("#{name.pem}")
     public_key_material=rsa_key.public_key
   end
-  def 
+  
+  
   
 end
 end

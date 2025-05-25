@@ -3,17 +3,17 @@ require 'aws-sdk-ec2'
 module AwsHelperEngine
   module Ec2
     class snapshoot 
-      def initialize(volume_id,client)
+      def initialize(volume_id,client,region)
        @volume_id=volume_id
        @client=client
+       @region=region
        @dry_run=false
        @resp = nil
 
       end
       def create(description)
-         @resp=@client.create_snapshot(description,@volume_id)
-        
-        @resp
+         const response=@client.create_snapshot(description,@volume_id)
+         @resp=response.to_h
       end
       def delete
         raise 'Snapshot not created yet' unless @response
@@ -22,8 +22,13 @@ module AwsHelperEngine
         resp = client.delete_snapshot({ @resp.snapshot_id, dry_run })
       end
       def describe
-       @client.describe_snapshot(@resp.snapshot_id)
+       const response =@client.describe_snapshot([@resp.snapshot_id])
+       response
       end
-      def describe_
+ # u need to add describe snapshot with filter and describe multiple snapshot
+      def copy(description: string, destination_region)
+        @client.copy_snapshot(description,destination_region,@region,@resp.snapshot_id )
+      end
+      
     end
      

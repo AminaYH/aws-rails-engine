@@ -46,6 +46,27 @@ module AwsHelperEngine
         })
       end
 
+def get_topic_attributes(topic_arn:)
+  @client.get_topic_attributes(topic_arn: topic_arn)
+end
+def set_topic_attributes(topic_arn:, attribute_name:, attribute_value:)
+  @client.set_topic_attributes({
+    topic_arn: topic_arn,
+    attribute_name: attribute_name,
+    attribute_value: attribute_value
+  })
+end
+def get_subscription_attributes(subscription_arn:)
+  @client.get_subscription_attributes(subscription_arn: subscription_arn)
+end
+def set_subscription_attributes(subscription_arn:, attribute_name:, attribute_value:)
+  @client.set_subscription_attributes({
+    subscription_arn: subscription_arn,
+    attribute_name: attribute_name,
+    attribute_value: attribute_value
+  })
+end
+
 
     end
     

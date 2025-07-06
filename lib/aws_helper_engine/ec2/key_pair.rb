@@ -7,13 +7,13 @@ module AwsHelperEngine
   module Ec2
 class KeyPair
   
-  def initialize(name,  options = {})
+  def initialize(name,client,  options = {})
     @name=name
     @key_type = options[:key_type] || 'rsa'
     @key_format=options[:key_format] || 'pem'
     @tags = options[:tags] || []
-     @key_format = options[:key_format] || 'pem'
-    @client = Aws::EC2::Client.new(region: options[:region] || 'us-east-1')
+    @key_format = options[:key_format] || 'pem'
+    @client=client
     @dry_run=options[:dry_run] || false
   
   end

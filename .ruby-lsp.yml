@@ -1,0 +1,10 @@
+enabled_features:
+  - document_highlight
+  - document_symbol
+  - folding_range
+  - formatting
+  - hover
+  - inlay_hint
+  - selection_range
+  - semantic_highlighting
+  - workspace_symbols

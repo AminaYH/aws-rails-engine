@@ -3,11 +3,9 @@ require 'aws-sdk-ec2'
 require 'logger'
 module AwsHelperEngine
   module Ec2
+  class ElasticIP
+    def initialize
 
-class ElasticIP
-  def initialize
-
-  end
     end
 
   def allocate_elastic_ip_address(ec2_client)
@@ -32,6 +30,7 @@ rescue StandardError => e
   'Error'
 end
 
+end
 end
 
 end

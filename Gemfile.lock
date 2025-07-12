@@ -136,6 +136,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
+    language_server-protocol (3.17.0.5)
     logger (1.7.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
@@ -164,6 +165,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    prism (1.4.0)
     psych (5.2.3)
       date
       stringio
@@ -208,6 +210,8 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
+    rbs (3.9.4)
+      logger
     rdoc (6.13.1)
       psych (>= 4.0.0)
     reline (0.6.1)
@@ -229,6 +233,10 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.4)
+    ruby-lsp (0.25.0)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 5)
     securerandom (0.4.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -257,6 +265,7 @@ DEPENDENCIES
   debug (>= 1.0.0)
   puma
   rspec-rails
+  ruby-lsp
   sprockets-rails
   sqlite3
 

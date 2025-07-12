@@ -15,4 +15,6 @@ gem "debug", ">= 1.0.0"
 
 group :development, :test do
   gem 'rspec-rails'
+    gem 'ruby-lsp'
+
 end

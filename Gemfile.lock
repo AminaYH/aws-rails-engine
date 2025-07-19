@@ -97,6 +97,9 @@ GEM
       base64
       jmespath (~> 1, >= 1.6.1)
       logger
+    aws-sdk-dynamodb (1.144.0)
+      aws-sdk-core (~> 3, >= 3.216.0)
+      aws-sigv4 (~> 1.5)
     aws-sdk-ec2 (1.515.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
@@ -124,6 +127,10 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.6.2)
+    dotenv (3.1.8)
+    dotenv-rails (3.1.8)
+      dotenv (= 3.1.8)
+      railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.1)
     globalid (1.2.1)
@@ -164,6 +171,7 @@ GEM
       racc (~> 1.4)
     pp (0.6.2)
       prettyprint
+    prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.4.0)
     psych (5.2.3)
@@ -237,6 +245,7 @@ GEM
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
+    rufo (0.18.1)
     securerandom (0.4.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -247,6 +256,8 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (2.6.0-x86_64-linux-gnu)
     stringio (3.1.6)
+    syntax_tree (6.3.0)
+      prettier_print (>= 1.2.0)
     thor (1.3.2)
     timeout (0.4.3)
     tzinfo (2.0.6)
@@ -261,13 +272,19 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
+  aws-sdk-dynamodb
+  aws-sdk-ec2
+  aws-sdk-s3
   aws_helper_engine!
   debug (>= 1.0.0)
+  dotenv-rails
   puma
   rspec-rails
   ruby-lsp
+  rufo
   sprockets-rails
   sqlite3
+  syntax_tree (~> 6.3)
 
 BUNDLED WITH
    2.6.2

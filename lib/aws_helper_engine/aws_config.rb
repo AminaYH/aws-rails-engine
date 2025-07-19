@@ -8,7 +8,12 @@ module AwsHelperEngine
     class AwsConfig
       attr_reader :access_key_id, :secret_access_key, :http, :options
 
-      def initialize(access_key_id: nil, secret_access_key: nil, http: nil, options: {})
+      def initialize(
+        access_key_id: nil,
+        secret_access_key: nil,
+        http: nil,
+        options: {}
+      )
         @access_key_id = access_key_id
         @secret_access_key = secret_access_key
         @http = http
@@ -32,7 +37,6 @@ module AwsHelperEngine
       # This method can authenticate using IAM roles (example, not complete)
       def authenticate_with_iam_role
         # Here you can load credentials from environment or instance profile
-
       end
     end
   end

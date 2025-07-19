@@ -1,8 +1,10 @@
 require "aws-sns-sdk"
 module AwsHelperEngine
-module sns
-class client
-  attr_reader: client
+module Sns
+class Client
+  
+
+  attr_reader:  @client
   def initialize(region:"us-east-1", access_key_id: nil, secret_access_key: nil, session_token: nil)
     @client=AWS::SNS::Client.new(
       region: region,

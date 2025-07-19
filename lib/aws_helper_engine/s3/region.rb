@@ -2,7 +2,6 @@
 
 module AwsHelperEngine
   module S3
-    REGION = 'us-east-1'
+    REGION = "us-east-1"
   end
 end
-

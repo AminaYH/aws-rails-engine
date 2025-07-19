@@ -245,7 +245,6 @@ GEM
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
-    rufo (0.18.1)
     securerandom (0.4.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -281,7 +280,6 @@ DEPENDENCIES
   puma
   rspec-rails
   ruby-lsp
-  rufo
   sprockets-rails
   sqlite3
   syntax_tree (~> 6.3)

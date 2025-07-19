@@ -8,6 +8,23 @@ module AwsHelperEngine
         @client = client
         @logger = Logger.new($stdout)
       end
+      def create_instance(image_id: "ami-12345678", instance_type: "t2.micro")
+        @logger.info("Creating EC2 instance...")
+        resp = @client.run_instances(
+          image_id: image_id,
+          instance_type: instance_type,
+          min_count: 1,
+          max_count: 1
+        )
+        instance = resp.instances.first
+        if instance
+          @logger.info("Created instance with ID: #{instance.instance_id}")
+          instance   # Return the instance object instead of just ID
+        else
+          @logger.error("Failed to create instance")
+          nil
+        end
+      end
 
       def list_instances
         @logger.info("Listing instances")

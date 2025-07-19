@@ -22,3 +22,5 @@ group :development, :test do
 end
 
 gem "syntax_tree", "~> 6.3"
+
+gem "rspec", "~> 3.13"

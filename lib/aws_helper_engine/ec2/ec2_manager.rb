@@ -2,7 +2,7 @@
 require "aws-sdk-ec2"
 require "logger"
 module AwsHelperEngine
-  module Ec2
+  module EC2
     class EC2Manager
       def initialize(client)
         @client = client
@@ -10,16 +10,17 @@ module AwsHelperEngine
       end
       def create_instance(image_id: "ami-12345678", instance_type: "t2.micro")
         @logger.info("Creating EC2 instance...")
-        resp = @client.run_instances(
-          image_id: image_id,
-          instance_type: instance_type,
-          min_count: 1,
-          max_count: 1
-        )
+        resp =
+          @client.run_instances(
+            image_id: image_id,
+            instance_type: instance_type,
+            min_count: 1,
+            max_count: 1
+          )
         instance = resp.instances.first
         if instance
           @logger.info("Created instance with ID: #{instance.instance_id}")
-          instance   # Return the instance object instead of just ID
+          instance
         else
           @logger.error("Failed to create instance")
           nil
@@ -29,11 +30,8 @@ module AwsHelperEngine
       def list_instances
         @logger.info("Listing instances")
         instances = fetch_instances
-        if instances.empty?
-          @logger.info("You have no instances")
-        else
-          print_instances(instances)
-        end
+        instances.empty? ? @logger.info("You have no instances") : instances
+        instances
       end
       def fetch_instances
         paginator = @client.describe_instances

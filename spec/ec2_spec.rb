@@ -13,7 +13,9 @@ RSpec.describe AwsHelperEngine::EC2::Client do
     )
   end
 
-  let(:wrapper) { described_class.new(region: "us-east-1") }
+  let(:wrapper) do
+    described_class.new(region: "us-east-1", stub_responses: true)
+  end
   let(:manager) { AwsHelperEngine::EC2::EC2Manager.new(wrapper.client) }
 
   it "initializes an EC2 client" do
@@ -43,5 +45,9 @@ RSpec.describe AwsHelperEngine::EC2::Client do
 
     expect(instance).to be_a(Aws::EC2::Types::Instance)
     expect(instance.instance_id).to eq(fake_instance_id)
+  end
+  it "list all EC2 instances" do
+    instances = manager.list_instances
+    instances.each { |i| expect(i).to be_a(Aws::EC2::Types::Instance) }
   end
 end

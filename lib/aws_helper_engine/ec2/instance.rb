@@ -3,15 +3,13 @@ require "aws-sdk-ec2"
 require "logger"
 
 module AwsHelperEngine
-  module Ec2
+  module EC2
     class Instance
-      def initialize(access_key_id:, secret_access_key:, region: "us-east-1")
-        creds = Aws::Credentials.new(access_key_id, secret_access_key)
-        @client = Aws::EC2::Client.new(region: region, credentials: creds)
+      def initialize(client)
+        @client = client
       end
-      def instance_started?(ec2_client, instance_id)
-        response =
-          ec2_client.describe_instance_status(instance_ids: [instance_id])
+      def instance_started?(instance_id)
+        response = @client.describe_instance_status(instance_ids: [instance_id])
 
         if response.instance_statuses.count.positive?
           state = response.instance_statuses[0].instance_state.name
@@ -29,8 +27,8 @@ module AwsHelperEngine
           end
         end
 
-        ec2_client.start_instances(instance_ids: [instance_id])
-        ec2_client.wait_until(:instance_running, instance_ids: [instance_id])
+        @client.start_instances(instance_ids: [instance_id])
+        @client.wait_until(:instance_running, instance_ids: [instance_id])
         puts "Instance started."
         true
       rescue StandardError => e

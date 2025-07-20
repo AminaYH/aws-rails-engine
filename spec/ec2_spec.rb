@@ -3,7 +3,7 @@ require "rspec"
 $LOAD_PATH.unshift File.expand_path("../../../../lib", __FILE__)
 require "aws_helper_engine/ec2/client"
 require "aws_helper_engine/ec2/ec2_manager" # Make sure this is required too
-
+require "aws_helper_engine/ec2/instance"
 RSpec.describe AwsHelperEngine::EC2::Client do
   before do
     Aws.config.update(
@@ -17,13 +17,13 @@ RSpec.describe AwsHelperEngine::EC2::Client do
     described_class.new(region: "us-east-1", stub_responses: true)
   end
   let(:manager) { AwsHelperEngine::EC2::EC2Manager.new(wrapper.client) }
+  let(:instance_helper) { AwsHelperEngine::EC2::Instance.new(wrapper.client) }
 
   it "initializes an EC2 client" do
     expect(wrapper.client).to be_an_instance_of(Aws::EC2::Client)
   end
 
   it "creates an EC2 instance and returns an Aws::EC2::Types::Instance object" do
-    # Stub the response for run_instances
     fake_instance_id = "i-1234567890abcdef0"
     wrapper.client.stub_responses(
       :run_instances,
@@ -49,5 +49,69 @@ RSpec.describe AwsHelperEngine::EC2::Client do
   it "list all EC2 instances" do
     instances = manager.list_instances
     instances.each { |i| expect(i).to be_a(Aws::EC2::Types::Instance) }
+  end
+  it "describe all EC2 instances" do
+    instances = manager.fetch_instances
+    instances.each { |i| expect(i).to be_a(Aws::EC2::Types::Instance) }
+  end
+  it "print all ec2 instances" do
+    fake_instance_id = "i-1234567890abcdef0"
+    fake_instance =
+      Aws::EC2::Types::Instance.new(
+        instance_id: fake_instance_id,
+        instance_type: "t2.micro",
+        public_ip_address: "1.2.3.4",
+        public_dns_name: "ec2-1-2-3-4.compute-1.amazonaws.com"
+      )
+    fake_logger = double("Logger")
+    allow(fake_logger).to receive(:info)
+    manager.instance_variable_set(:@logger, fake_logger)
+
+    manager.print_instances([fake_instance])
+
+    expect(fake_logger).to have_received(:info).with(
+      "Instance ID: i-1234567890abcdef0"
+    )
+    expect(fake_logger).to have_received(:info).with("Instance Type: t2.micro")
+    expect(fake_logger).to have_received(:info).with("Public IP: 1.2.3.4")
+    expect(fake_logger).to have_received(:info).with(
+      "Public DNS Name: ec2-1-2-3-4.compute-1.amazonaws.com"
+    )
+    expect(fake_logger).to have_received(:info).with("\n")
+  end
+
+  it "returns false if instance is pending" do
+    instance_id = "i-1234567890abcdef0"
+
+    wrapper.client.stub_responses(
+      :describe_instance_status,
+      { instance_statuses: [{ instance_state: { name: "pending" } }] }
+    )
+
+    expect(instance_helper.instance_started?(instance_id)).to eq(false)
+  end
+
+  it "returns false if instance is terminated" do
+    instance_id = "i-1234567890abcdef0"
+
+    wrapper.client.stub_responses(
+      :describe_instance_status,
+      { instance_statuses: [{ instance_state: { name: "terminated" } }] }
+    )
+
+    expect(instance_helper.instance_started?(instance_id)).to eq(false)
+  end
+
+  it "starts instance and waits until running when not in any specific state" do
+    instance_id = "i-1234567890abcdef0"
+
+    wrapper.client.stub_responses(
+      :describe_instance_status,
+      { instance_statuses: [] }
+    )
+    wrapper.client.stub_responses(:start_instances, {})
+    wrapper.client.stub_responses(:wait_until)
+
+    expect(instance_helper.instance_started?(instance_id)).to eq(true)
   end
 end

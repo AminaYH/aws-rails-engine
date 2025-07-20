@@ -85,7 +85,15 @@ RSpec.describe AwsHelperEngine::EC2::Client do
 
     wrapper.client.stub_responses(
       :describe_instances,
-      { reservations: [{ instance_state: { name: "pending" } }] }
+      {
+        reservations: [
+          {
+            instances: [
+              { instance_id: instance_id, state: { name: "pending" } }
+            ]
+          }
+        ]
+      }
     )
 
     expect(instance_helper.instance_started?(instance_id)).to eq(false)
@@ -96,7 +104,15 @@ RSpec.describe AwsHelperEngine::EC2::Client do
 
     wrapper.client.stub_responses(
       :describe_instances,
-      { reservations: [{ instance_state: { name: "terminated" } }] }
+      {
+        reservations: [
+          {
+            instances: [
+              { instance_id: instance_id, state: { name: "terminated" } }
+            ]
+          }
+        ]
+      }
     )
 
     expect(instance_helper.instance_started?(instance_id)).to eq(false)

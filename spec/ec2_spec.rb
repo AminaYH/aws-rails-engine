@@ -84,8 +84,8 @@ RSpec.describe AwsHelperEngine::EC2::Client do
     instance_id = "i-1234567890abcdef0"
 
     wrapper.client.stub_responses(
-      :describe_instance_status,
-      { instance_statuses: [{ instance_state: { name: "pending" } }] }
+      :describe_instances,
+      { reservations: [{ instance_state: { name: "pending" } }] }
     )
 
     expect(instance_helper.instance_started?(instance_id)).to eq(false)
@@ -95,8 +95,8 @@ RSpec.describe AwsHelperEngine::EC2::Client do
     instance_id = "i-1234567890abcdef0"
 
     wrapper.client.stub_responses(
-      :describe_instance_status,
-      { instance_statuses: [{ instance_state: { name: "terminated" } }] }
+      :describe_instances,
+      { reservations: [{ instance_state: { name: "terminated" } }] }
     )
 
     expect(instance_helper.instance_started?(instance_id)).to eq(false)
@@ -105,12 +105,12 @@ RSpec.describe AwsHelperEngine::EC2::Client do
   it "starts instance and waits until running when not in any specific state" do
     instance_id = "i-1234567890abcdef0"
 
-    wrapper.client.stub_responses(
-      :describe_instance_status,
-      { instance_statuses: [] }
-    )
+    wrapper.client.stub_responses(:describe_instances, { reservations: [] })
     wrapper.client.stub_responses(:start_instances, {})
-    wrapper.client.stub_responses(:wait_until)
+    allow(wrapper.client).to receive(:wait_until).with(
+      :instance_running,
+      instance_ids: [instance_id]
+    ).and_return(true)
 
     expect(instance_helper.instance_started?(instance_id)).to eq(true)
   end

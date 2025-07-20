@@ -9,20 +9,20 @@ module AwsHelperEngine
         @client = client
       end
       def instance_started?(instance_id)
-        response = @client.describe_instance_status(instance_ids: [instance_id])
+        response = @client.describe_instances(instance_ids: [instance_id])
 
-        if response.instance_statuses.count.positive?
-          state = response.instance_statuses[0].instance_state.name
+        reservations = response.reservations
+        if reservations.any? && reservations[0].instances.any?
+          state = reservations[0].instances[0].state.name
           case state
           when "pending"
-            puts "Error starting instance: the instance is pending. Try again later."
+            puts "Instance is pending. Try again later."
             return false
           when "running"
             puts "The instance is already running."
             return true
           when "terminated"
-            puts "Error starting instance: " \
-                   "the instance is terminated, so you cannot start it."
+            puts "Instance is terminated."
             return false
           end
         end

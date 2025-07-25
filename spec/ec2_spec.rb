@@ -2,8 +2,9 @@
 require "rspec"
 $LOAD_PATH.unshift File.expand_path("../../../../lib", __FILE__)
 require "aws_helper_engine/ec2/client"
-require "aws_helper_engine/ec2/ec2_manager" # Make sure this is required too
+require "aws_helper_engine/ec2/ec2_manager"
 require "aws_helper_engine/ec2/instance"
+require "aws_helper_engine/ec2/key_pair"
 RSpec.describe AwsHelperEngine::EC2::Client do
   before do
     Aws.config.update(
@@ -18,7 +19,9 @@ RSpec.describe AwsHelperEngine::EC2::Client do
   end
   let(:manager) { AwsHelperEngine::EC2::EC2Manager.new(wrapper.client) }
   let(:instance_helper) { AwsHelperEngine::EC2::Instance.new(wrapper.client) }
-
+  let(:keypair) do
+    AwsHelperEngine::EC2::Keypair.new("test-key", wrapper.client)
+  end
   it "initializes an EC2 client" do
     expect(wrapper.client).to be_an_instance_of(Aws::EC2::Client)
   end
@@ -129,5 +132,18 @@ RSpec.describe AwsHelperEngine::EC2::Client do
     ).and_return(true)
 
     expect(instance_helper.instance_started?(instance_id)).to eq(true)
+  end
+  it "create key pair" do
+    keypair_response =
+      keypair.create(
+        key_type: "rsa",
+        key_format: "pem",
+        dry_run: false,
+        tags: [{ key: "tag_test", value: "test-key" }]
+      )
+    expect(keypair_response.data).to be_a(Aws::EC2::Types::KeyPair)
+  end
+  it "delete keypair" do
+    keypair.delete(dry_run: false)
   end
 end

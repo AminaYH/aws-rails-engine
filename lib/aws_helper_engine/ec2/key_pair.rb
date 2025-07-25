@@ -24,10 +24,17 @@ module AwsHelperEngine
         @response
       end
       def delete(dry_run: false)
-        @client.delete_key_pair(
-          { key_name: @name, key_pair_id: get_key_pair_id, dry_run: dry_run }
-        )
+        params = { dry_run: dry_run }
+
+        if get_key_pair_id
+          params[:key_pair_id] = get_key_pair_id
+        else
+          params[:key_name] = @name
+        end
+
+        @client.delete_key_pair(params)
       end
+
       def get_key_pair_id
         @response&.key_pair_id
       end

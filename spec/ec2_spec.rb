@@ -20,7 +20,7 @@ RSpec.describe AwsHelperEngine::EC2::Client do
   let(:manager) { AwsHelperEngine::EC2::EC2Manager.new(wrapper.client) }
   let(:instance_helper) { AwsHelperEngine::EC2::Instance.new(wrapper.client) }
   let(:keypair) do
-    AwsHelperEngine::EC2::Keypair.new("test-key", wrapper.client)
+    AwsHelperEngine::EC2::Keypair.new("test_key", wrapper.client)
   end
   it "initializes an EC2 client" do
     expect(wrapper.client).to be_an_instance_of(Aws::EC2::Client)
@@ -143,7 +143,11 @@ RSpec.describe AwsHelperEngine::EC2::Client do
       )
     expect(keypair_response.data).to be_a(Aws::EC2::Types::KeyPair)
   end
-  it "delete keypair" do
-    keypair.delete(dry_run: false)
+  it "deletes keypair ", type: :integration do
+    response = keypair.delete(dry_run: false)
+
+    expect(response).to be_a(Seahorse::Client::Response)
+    expect(response.data).to be_a(Aws::EC2::Types::DeleteKeyPairResult)
+    expect(response.data).to respond_to(:key_pair_id)
   end
 end

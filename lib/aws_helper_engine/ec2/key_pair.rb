@@ -32,7 +32,7 @@ module AwsHelperEngine
           params[:key_name] = @name
         end
 
-        @client.delete_key_pair(params)
+        @client.delete_key_pair(key_name: @name, dry_run: dry_run)
       end
 
       def get_key_pair_id

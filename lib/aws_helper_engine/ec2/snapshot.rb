@@ -1,3 +1,5 @@
+# lib/aws_helper_engine/ec2/snapshoot.rb
+
 require "aws-sdk-ec2"
 
 module AwsHelperEngine
@@ -10,34 +12,43 @@ module AwsHelperEngine
         @dry_run = false
         @resp = nil
       end
+
       def create(description)
-        const response = @client.create_snapshot(description, @volume_id)
-        @resp = response.to_h
-      end
-      def delete
-        raise "Snapshot not created yet" unless @response
-
-        resp =
-          client.delete_snapshot(
-            { snapshot_id: @resp[:snapshot_id], dry_run: @dry_run }
+        response =
+          @client.create_snapshot(
+            volume_id: @volume_id,
+            description: description,
+            dry_run: @dry_run
           )
-      end
-      def describe
-        const response = @client.describe_snapshot([@resp.snapshot_id])
-        response
+        @resp = response.to_h
+        @resp
       end
 
-      # u need to add describe snapshot with filter and describe multiple snapshot
-      def copy(description: string, destination_region: destination_region)
+      def delete
+        raise "Snapshot not created yet" unless @resp
+
+        @client.delete_snapshot(
+          snapshot_id: @resp[:snapshot_id],
+          dry_run: @dry_run
+        )
+      end
+
+      def describe
+        raise "Snapshot not created yet" unless @resp
+
+        @client.describe_snapshots(snapshot_ids: [@resp[:snapshot_id]])
+      end
+
+      def copy(description:, destination_region:)
+        raise "Snapshot not created yet" unless @resp
+
         @client.copy_snapshot(
-          description,
-          destination_region,
-          @region,
-          @resp.snapshot_id
+          source_region: @region,
+          source_snapshot_id: @resp[:snapshot_id],
+          description: description,
+          destination_region: destination_region
         )
       end
     end
   end
 end
-
-

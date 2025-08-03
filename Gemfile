@@ -15,6 +15,7 @@ gem "debug", ">= 1.0.0"
 gem "aws-sdk-s3"
 gem "aws-sdk-dynamodb"
 gem "aws-sdk-ec2"
+gem "aws-sdk-iam"
 group :development, :test do
   gem "rspec-rails"
   gem "ruby-lsp"

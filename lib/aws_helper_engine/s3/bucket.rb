@@ -8,42 +8,44 @@ module AwsHelperEngine
     class Bucket
       attr_reader :s3_resource, :options, :region
 
-      def initialize(region: "us-east-1")
+      def initialize(client, ressource, region)
         @region = region
-        @s3_resource = Aws::S3::Resource.new(region: @region)
-        @s3_client = Aws::S3::Client.new(region: @region)
+        @s3_resource = ressource
+        @s3_client = client
       end
 
-      # Create the bucket with ACL, name, and configuration
       def create_bucket(bucket_name, acl: "private")
-        bucket =
-          @s3_resource.create_bucket(
-            bucket: bucket_name,
-            acl: acl,
-            create_bucket_configuration: {
-              location_constraint: @region
-            }
-          )
-        puts "Created demo bucket named #{bucket.name}."
-        bucket
+        params = { bucket: bucket_name, acl: acl }
+
+        if @region != "us-east-1"
+          params[:create_bucket_configuration] = {
+            location_constraint: @region
+          }
+        end
+
+        @s3_client.create_bucket(params)
+
+        puts "Created demo bucket named #{bucket_name}."
+        @s3_resource.bucket(bucket_name)
       rescue Aws::Errors::ServiceError => e
-        puts "Failed to create bucket: #{e.message}"
+        "Failed to create bucket: #{e.message}"
       end
-      def self.list_buckets
+
+      def list_buckets
         count = 0
-        @s3_resource.list_buckets.buckets.each { |i| count + 1 }
+        @s3_client.list_buckets.buckets.each { |i| count + 1 }
         return count
       rescue Aws::Errors::ServiceError => e
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false
       end
-      def delete_bucket(bucke_name)
+      def delete_bucket(bucket_name)
         bucket = @s3_resource.bucket(bucket_name)
         bucket.objects.each(&:delete)
         bucket.delete
       rescue Aws::Errors::ServiceError => e
         puts "Failed to delete bucket: #{e.message}"
-        false
+        nil
       end
 
       def put_object(object)

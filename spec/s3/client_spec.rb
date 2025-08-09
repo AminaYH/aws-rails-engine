@@ -1,5 +1,5 @@
 require "aws-sdk-s3"
-require "../aws_helper_engine/s3/client"
+require "aws_helper_engine/s3/client.rb"
 
 RSpec.describe AwsHelperEngine::S3::Client do
   let(:credentials) do
@@ -8,10 +8,11 @@ RSpec.describe AwsHelperEngine::S3::Client do
   let(:bucket_name) { "test-bucket" }
   let(:key) { "test-key.txt" }
   let(:body) { "Hello, world!" }
+  let(:region) { "us-east-1" }
   before do
     s3 =
       Aws::S3::Client.new(
-        credentials: Aws::Credentials.new("fake_access_key", "fake_secret_key"),
+        credentials: credentials,
         region: "us-east-1",
         endpoint: "http://localhost:4566",
         force_path_style: true
@@ -40,10 +41,8 @@ RSpec.describe AwsHelperEngine::S3::Client do
     end
   end
   describe "get object " do
+    before { client.put_object(bucket_name: bucket_name, key: key, body: body) }
     it " get object from bucket" do
-      before do
-        client.put_object(bucket_name: bucket_name, key: key, body: body)
-      end
       resp = client.get_object(bucket_name: bucket_name, key: key)
       expect(resp.body.read).to eq(body)
     end

@@ -48,13 +48,13 @@ module AwsHelperEngine
         nil
       end
 
-      def put_object(object)
+      def put_object(bucket_name, object)
         puts "Putting object '#{object}' in the bucket."
-        @s3_client.bucket(@bucket_name).put_object(
+        @s3_resource.bucket(bucket_name).put_object(
           key: object.key,
           body: object.body
         )
-        puts "Uploaded successfully."
+        return "Uploaded successfully."
       rescue Aws::Errors::ServiceError => e
         puts "Couldn't list buckets. Here's why: #{e.message}"
         false

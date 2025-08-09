@@ -7,6 +7,8 @@ RSpec.describe AwsHelperEngine::S3::Bucket do
   end
   let(:region) { "us-east-1" }
   let(:bucket_name) { "test-bucket-#{SecureRandom.hex(4)}" }
+  let(:key) { "test-key.txt" }
+  let(:body) { "Hello, world!" }
   before do
     @client =
       Aws::S3::Client.new(
@@ -43,6 +45,13 @@ RSpec.describe AwsHelperEngine::S3::Bucket do
     it "delete non existing bucket" do
       response = bucket_helper.delete_bucket("bucket-test")
       expect(response).to be nil
+    end
+  end
+  describe "controle object" do
+    it "#put_object" do
+      object = { key: key, body: body }
+      respo = bucket_helper.put_object(bucket_name, object)
+      expect(respo).to be "Uploaded successfully."
     end
   end
 end

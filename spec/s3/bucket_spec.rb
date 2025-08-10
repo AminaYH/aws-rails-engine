@@ -48,10 +48,48 @@ RSpec.describe AwsHelperEngine::S3::Bucket do
     end
   end
   describe "controle object" do
-    it "#put_object" do
-      object = { key: key, body: body }
+    before { bucket_helper.create_bucket(bucket_name, acl: "private") }
+
+    it "#put_object uploads successfully" do
+      object = OpenStruct.new(key: key, body: body)
       respo = bucket_helper.put_object(bucket_name, object)
-      expect(respo).to be "Uploaded successfully."
+      expect(respo).to eq("Uploaded successfully.")
+    end
+    it "#get_object downloads successfully" do
+      object = OpenStruct.new(key: key, body: body)
+      bucket_helper.put_object(bucket_name, object)
+      file_path = "/tmp/#{key}"
+      bucket_helper.get_object(
+        bucket_name: bucket_name,
+        key: key,
+        response_target: file_path
+      )
+      expect(File.read(file_path)).to eq(body)
+    end
+    it "#delete_object removes object" do
+      object = OpenStruct.new(key: key, body: body)
+      bucket_helper.put_object(bucket_name, object)
+      expect(bucket_helper.delete_object(bucket_name, key)).to be_truthy
+    end
+
+    it "#object_exists? returns true for existing object" do
+      object = OpenStruct.new(key: key, body: body)
+      bucket_helper.put_object(bucket_name, object)
+      expect(bucket_helper.object_exists?(bucket_name, key)).to be true
+    end
+
+    it "#object_exists? returns false for missing object" do
+      expect(bucket_helper.object_exists?(bucket_name, "nope.txt")).to be false
+    end
+  end
+  describe "bucket existence check" do
+    it "returns true if bucket exists" do
+      bucket_helper.create_bucket(bucket_name, acl: "private")
+      expect(bucket_helper.bucket_exists?(bucket_name)).to be true
+    end
+
+    it "returns false if bucket does not exist" do
+      expect(bucket_helper.bucket_exists?("missing-bucket")).to be false
     end
   end
 end

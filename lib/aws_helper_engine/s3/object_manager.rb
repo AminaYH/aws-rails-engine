@@ -4,18 +4,19 @@ require "securerandom"
 module AwsHelperEngine
   module S3
     class ObjectManager
-      def initialize(region: "us-east-1")
+      def initialize(client, resource, region = "us-east-1")
         @region = region
-        @s3_resource = Aws::S3::Resource.new(region: region)
-        @s3_client = Aws::S3::Client.new(region: region)
+        @s3_resource = resource
+        @s3_client = client
       end
 
       def upload_file(bucket_name, file_path, key = nil)
         original_filename = File.basename(file_path)
-        key = "#{SecureRandom.uuid}_#{original_filename}"
+        key ||= "#{SecureRandom.uuid}_#{original_filename}"
         bucket = @s3_resource.bucket(bucket_name)
         bucket.object(key).upload_file(file_path)
         puts "Uploaded '#{file_path}' to '#{bucket_name}/#{key}'"
+        key
       rescue Aws::Errors::ServiceError => e
         puts "Upload failed: #{e.message}"
       end
@@ -27,8 +28,10 @@ module AwsHelperEngine
           key: key
         )
         puts "Downloaded '#{key}' to '#{destination_path}'"
+        destination_path # or key
       rescue Aws::Errors::ServiceError => e
         puts "Download failed: #{e.message}"
+        raise # so tests fail instead of silently returning nil
       end
 
       def copy_object(source_bucket, source_key, dest_bucket, dest_key)

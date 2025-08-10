@@ -60,9 +60,9 @@ module AwsHelperEngine
         false
       end
 
-      def get_object(key:, response_target:)
+      def get_object(bucket_name:, key:, response_target:)
         @s3_client.get_object(
-          bucket: @bucket_name,
+          bucket: bucket_name,
           key: key,
           response_target: response_target
         )
@@ -95,6 +95,7 @@ module AwsHelperEngine
         bucket = @s3_resource.bucket(bucket_name)
         bucket.object(key).delete
         puts "Deleted object '#{key}' from bucket '#{bucket_name}'."
+        true
       rescue Aws::Errors::ServiceError => e
         puts "Failed to delete object: #{e.message}"
         false

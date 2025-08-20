@@ -25,3 +25,9 @@ end
 gem "syntax_tree", "~> 6.3"
 
 gem "rspec", "~> 3.13"
+
+gem "gem", "~> 0.0.1.alpha"
+gem "aws-sdk-cloudwatch", "~> 1.115"
+
+gem "gems", "~> 1.3"
+gem "aws-sdk-cloudwatchlogs", "~> 1.116"

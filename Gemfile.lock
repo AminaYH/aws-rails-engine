@@ -115,6 +115,9 @@ GEM
     aws-sdk-kms (1.99.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
+    aws-sdk-lambda (1.151.0)
+      aws-sdk-core (~> 3, >= 3.216.0)
+      aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.183.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sdk-kms (~> 1)
@@ -260,6 +263,7 @@ GEM
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
+    rubyzip (3.0.1)
     securerandom (0.4.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -291,6 +295,7 @@ DEPENDENCIES
   aws-sdk-dynamodb
   aws-sdk-ec2
   aws-sdk-iam
+  aws-sdk-lambda (~> 1.151)
   aws-sdk-s3
   aws_helper_engine!
   debug (>= 1.0.0)
@@ -301,6 +306,7 @@ DEPENDENCIES
   rspec (~> 3.13)
   rspec-rails
   ruby-lsp
+  rubyzip (~> 3.0)
   sprockets-rails
   sqlite3
   syntax_tree (~> 6.3)

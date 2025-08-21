@@ -31,3 +31,7 @@ gem "aws-sdk-cloudwatch", "~> 1.115"
 
 gem "gems", "~> 1.3"
 gem "aws-sdk-cloudwatchlogs", "~> 1.116"
+
+gem "aws-sdk-lambda", "~> 1.151"
+
+gem "rubyzip", "~> 3.0"
